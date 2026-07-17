@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Untuk Bella...</title>
+    <style>
+        /* === RESET & DASAR === */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body, html {
+            width: 100vw;
+            height: 100vh;
+            background-color: #E6E6FA; /* Dominan Ungu Muda (Lavender) */
+            overflow: hidden; /* Mencegah scroll yang tidak perlu */
+            position: relative;
+        }
+
+        /* === PENGATURAN LAYAR (STEPS) === */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease, transform 1s ease;
+            display: flex;
+            flex-direction: column;
+            z-index: 5;
+        }
+
+        .screen.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 10;
+        }
+
+        /* === TAHAP 1: LANDING PAGE === */
+        /* Grid Foto Belakang */
+        .bg-photos {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            z-index: -2;
+        }
+        .bg-photos img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Gradasi Hitam (Overlay) */
+        .gradient-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            /* Default untuk Laptop: Hitam di kanan, pudar ke kiri */
+            background: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.7) 40%, #050505 85%);
+        }
+
+        /* Konten Landing Page */
+        .landing-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end; /* Tulisan di kanan */
+            padding: 50px;
+            text-align: right;
+            color: white;
+        }
+        .landing-content h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+        }
+        .landing-content p {
+            font-size: 1.3em;
+            color: #E6E6FA;
+            margin-bottom: 30px;
+            max-width: 500px;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
+        }
+
+        /* === TAHAP TEKS FULL SCREEN === */
+        .text-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #E6E6FA, #D8BFD8); /* Ungu Muda */
+        }
+        .text-screen h1 {
+            color: #4B0082; /* Indigo/Ungu Gelap agar terbaca */
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .text-screen p {
+            color: #5C4033;
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* === TAHAP FINAL PAGE (FOTO BESAR) === */
+        .final-screen {
+            background: linear-gradient(135deg, #E6E6FA, #D8BFD8);
+            justify-content: flex-start;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-y: auto; /* Bisa di-scroll jika layar HP kecil */
+            text-align: center;
+        }
+        
+        .final-screen h1 {
+            color: #4B0082;
+            font-size: 2.5em;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        /* Galeri Foto Besar */
+        .big-gallery {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 900px;
+        }
+        .big-gallery img {
+            width: 250px;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(75, 0, 130, 0.3);
+            border: 5px solid white;
+            transition: transform 0.4s;
+        }
+        .big-gallery img:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+        
+        .final-msg {
+            color: #4B0082;
+            font-size: 1.3em;
+            max-width: 700px;
+            line-height: 1.6;
+            font-weight: 500;
+            margin-bottom: 50px;
+        }
+
+        /* === TOMBOL === */
+        button {
+            background: linear-gradient(135deg, #BA55D3, #8A2BE2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6);
+        }
+
+        /* === ANIMASI === */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-7px); }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            top: -20px;
+            z-index: 100;
+            opacity: 0.9;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(720deg); }
+        }
+
+        /* === MEDIA QUERIES (OPTIMASI KHUSUS HP) === */
+        @media screen and (max-width: 768px) {
+            /* Ubah arah gradasi di HP: Hitam di bawah, pudar ke atas */
+            .gradient-overlay {
+                background: linear-gradient(to top, #050505 10%, rgba(0,0,0,0.8) 45%, transparent 90%);
+            }
+            .landing-content {
+                justify-content: flex-end; /* Konten turun ke bawah */
+                align-items: center; /* Teks di tengah */
+                text-align: center;
+                padding: 30px 20px 50px 20px;
+            }
+            .landing-content h1 {
+                font-size: 2.5em;
+            }
+            .landing-content p {
+                font-size: 1.1em;
+            }
+            
+            /* Penyesuaian teks tengah */
+            .text-screen h1 { font-size: 2em; }
+            .text-screen p { font-size: 1.1em; padding: 0 15px; }
+
+            /* Penyesuaian Foto di Final Page */
+            .big-gallery {
+                gap: 15px;
+            }
+            .big-gallery img {
+                width: 45%; /* Di HP, foto jadi dua baris bersebelahan */
+                height: 220px;
+                border: 3px solid white;
+            }
+            .final-msg {
+                font-size: 1.1em;
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Musik Latar -->
+    <audio id="bgMusic" loop>
+        <source src="lagu.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- TAHAP 1: LANDING PAGE -->
+    <section id="step1" class="screen active">
+        <div class="bg-photos">
+            <img src="foto1.jpg" alt="bg">
+            <img src="foto2.jpg" alt="bg">
+            <img src="foto3.jpg" alt="bg">
+            <img src="foto4.jpg" alt="bg">
+        </div>
+        <div class="gradient-overlay"></div>
+        
+        <div class="landing-content">
+            <h1>Halo, Bella.</h1>
+            <p>Ada sesuatu yang spesial buat kamu hari ini. Jangan dilewatkan ya, coba klik tombol di bawah.</p>
+            <button onclick="nextStep('step1', 'step2', true)">Buka Pesan ✨</button>
+        </div>
+    </section>
+
+    <!-- TAHAP 2 -->
+    <section id="step2" class="screen text-screen">
+        <h1>Tunggu Sebentar... ⏳</h1>
+        <p>Sebelum kita lanjut, coba tarik napas pelan-pelan. Siapkan senyum manis dari seorang Bella Fananda Putri hari ini!</p>
+        <button onclick="nextStep('step2', 'step3')">Udah Siap 👉</button>
+    </section>
+
+    <!-- TAHAP 3 -->
+    <section id="step3" class="screen text-screen">
+        <h1>30 Juli... 🤔</h1>
+        <p>Pasti kamu udah tau kan tanggal ini hari yang luar biasa buat siapa? Yap, buat orang yang lagi baca tulisan ini.</p>
+        <button onclick="nextStep('step3', 'step4')">Terus? 🎉</button>
+    </section>
+
+    <!-- TAHAP 4 -->
+    <section id="step4" class="screen text-screen">
+        <h1>Terima Kasih Ya ✨</h1>
+        <p>Terima kasih udah bertahan, berjuang, dan jadi versi terbaik dari dirimu sampai detik ini. Kamu luar biasa, Bel!</p>
+        <button onclick="nextStep('step4', 'step5')">Lanjut 👉</button>
+    </section>
+
+    <!-- TAHAP 5 -->
+    <section id="step5" class="screen text-screen">
+        <h1>Harapanku... 🌟</h1>
+        <p>Semoga semua hal baik selalu mengelilingimu, langkahmu makin dimudahkan, dan bahagiamu terus bertambah setiap harinya.</p>
+        <button onclick="nextStep('step5', 'step6')">Satu Lagi... 🎁</button>
+    </section>
+
+    <!-- TAHAP 6: FINAL PAGE -->
+    <section id="step6" class="screen final-screen">
+        <h1>Selamat Ulang Tahun, Bella! 🎂🥳</h1>
+        
+        <!-- Galeri Foto Besar -->
+        <div class="big-gallery">
+            <img src="foto1.jpg" alt="Memori 1">
+            <img src="foto2.jpg" alt="Memori 2">
+            <img src="foto3.jpg" alt="Memori 3">
+            <img src="foto4.jpg" alt="Memori 4">
+        </div>
+
+        <p class="final-msg">
+            Semoga di umur yang baru ini, Bella semakin bahagia, sehat selalu, rezekinya lancar, dan semua yang diimpikan segera terwujud. <b>Jangan lupa bahagia hari ini! 🤍</b>
+        </p>
+    </section>
+
+    <!-- SCRIPT LOGIKA -->
+    <script>
+        function nextStep(currentId, nextId, playMusic = false) {
+            // Mainkan musik saat tombol pertama diklik
+            if (playMusic) {
+                let music = document.getElementById("bgMusic");
+                music.volume = 0.6; // Volume lagu 60%
+                music.play().catch(e => console.log("Audio ditahan browser"));
+            }
+
+            // Ganti Layar
+            const currentScreen = document.getElementById(currentId);
+            const nextScreen = document.getElementById(nextId);
+
+            currentScreen.classList.remove('active');
+            
+            setTimeout(() => {
+                nextScreen.classList.add('active');
+                
+                // Jika masuk ke halaman terakhir (step6), luncurkan confetti!
+                if (nextId === 'step6') {
+                    startConfetti();
+                }
+            }, 800); // Durasi transisi memudar
+        }
+
+        // Fungsi Confetti (Hujan Kertas)
+        function startConfetti() {
+            const colors = ['#8A2BE2', '#BA55D3', '#DDA0DD', '#FFFFFF', '#FF69B4', '#FFD700'];
+            for(let i = 0; i < 150; i++) {
+                let conf = document.createElement('div');
+                conf.classList.add('confetti');
+                conf.style.left = Math.random() * 100 + 'vw';
+                if(Math.random() > 0.5) conf.style.borderRadius = '50%';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                conf.style.animationDelay = Math.random() * 2 + 's';
+                document.getElementById('step6').appendChild(conf);
+            }
+        }
+    </script>
+
+</body>
+</html>
